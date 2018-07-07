@@ -8,57 +8,43 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import static com.example.dekar.beaconfix.firebase.FBConnecting.value_x_int;
+import static com.example.dekar.beaconfix.firebase.FBConnecting.value_y_int;
+
 public class CustomView extends View {
-
-    private int value_X_after_hash;
-    private int value_Y_after_hash;
-    public float x;
-    public float y;
-    int[] arr_after_hashmap;
-
-
-    public CustomView(Context context) {
-        super(context);
-        init(null);
-    }
-    public CustomView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs);
-    }
-    public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(attrs);
-    }
-    public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(attrs);
-    }
 
     private float Height;
     private float Width;
 
-    private void init(@Nullable AttributeSet set){
+    public CustomView(Context context) {
+        super(context);
+        init();
+    }
+    public CustomView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+    public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init(){
         postInvalidate();
+        setWillNotDraw(false);
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.TRANSPARENT);       // set background
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        canvas.drawColor(Color.TRANSPARENT);
         Height = canvas.getHeight();
-        Width = canvas.getWidth();
         Width = canvas.getWidth();
 
         Paint iaAm = new Paint();
         iaAm.setColor(Color.RED);
-        canvas.drawCircle(value_X_after_hash * Width / 100, value_Y_after_hash * Height / 100,40, iaAm);
-
+        canvas.drawCircle(value_x_int * Width / 100, value_y_int * Height / 100, 40, iaAm);
 
         invalidate();
     }
-
-    public void setValue_X_Y_after_hash(int value_X_after_hash, int value_Y_after_hash) {
-        this.value_X_after_hash = value_X_after_hash;
-        this.value_Y_after_hash = value_Y_after_hash;
-    }
-
 }

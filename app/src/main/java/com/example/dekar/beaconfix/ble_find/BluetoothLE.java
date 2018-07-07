@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.example.dekar.beaconfix.MainActivity;
 import com.example.dekar.beaconfix.firebase.FBConnecting;
 import com.example.dekar.beaconfix.lv_adapter.DeviceListAdapter;
 
@@ -48,7 +47,6 @@ public class BluetoothLE {
         mDeviceListAdapter.notifyDataSetChanged();
     }
 
-    // Device scan callback.
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {

@@ -32,8 +32,10 @@ public class FBConnecting {
     private CustomView cvObject;
     private Context context;
     private boolean is3g;
-    private String output;
     private String snaps;
+
+    public static int value_x_int;
+    public static int value_y_int;
 
     public FBConnecting(Context context) {
         creatingHashMap();
@@ -47,39 +49,33 @@ public class FBConnecting {
         creatingHashMap();
     }
 
-    public void connectedToFirebase(String name_branch) {
+    public void connectedToFirebase(String nameBranch) {
+        if (nameBranch == null) nameBranch = "error";
+        check3g();
+        if (is3g) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference databaseRef = database.getReference(nameBranch);
+            databaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    snaps = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+                    convertValFB(snaps);
+                }
 
-        if (name_branch == null) {
-            name_branch = "error";
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
         }
-
-        //check3g();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference databaseRef = database.getReference(name_branch);
-        databaseRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                snaps = Objects.requireNonNull(dataSnapshot.getValue()).toString();
-                convertValueFarebase(snaps);
-
-                // databaseRef.child("iNode-C21A9A").child("X1").setValue("5");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 
     private void creatingHashMap(){
         if (hashmapCoordinates == null) hashmapCoordinates = new HashMap<String, int[]>();
     }
 
-    private void convertValueFarebase(String input) {
-
-        int value_x_int = 0;
-        int value_y_int = 0;
+    private void convertValFB(String input) {
+        value_x_int = 0;
+        value_y_int = 0;
         // for x
         Pattern PATTERNx = Pattern.compile("x=(.*?)\\,");
         Matcher matcherX = PATTERNx.matcher(input);
@@ -87,7 +83,6 @@ public class FBConnecting {
             String value_x_string = matcherX.group(1);
             value_x_int = Integer.parseInt(value_x_string);
         }
-
         // for y
         Pattern PATTERNy = Pattern.compile("y=(.*?)\\}");
         Matcher matcherY = PATTERNy.matcher(input);
@@ -103,18 +98,28 @@ public class FBConnecting {
         }
 
         hashmapCoordinates(deviceName, value_x_int, value_y_int);
-        // fakeBeacCoordinator();
     }
 
     private void hashmapCoordinates(String deviceName, int x, int y) {
-
         hashmapCoordinates.put(deviceName, new int[]{x, y});
         int[] arr_after_hashmap = hashmapCoordinates.get(deviceName);
         getInstanceCV();
-        cvObject.setValue_X_Y_after_hash(arr_after_hashmap[0], arr_after_hashmap[1]);
-        cvObject.invalidate();
         Toast toast = Toast.makeText(context, "HashMap " + arr_after_hashmap[0] + " " + arr_after_hashmap[1], Toast.LENGTH_SHORT);
         toast.show();
+        cvObject.invalidate();
+    }
+
+    private void check3g() {
+        manager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+        //For 3G check
+        assert manager != null;
+        is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+
+        if (!is3g) {
+            Toast.makeText(context, " you forgot to include 3g ", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, " enable in restart ", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void getInstanceCV() {
