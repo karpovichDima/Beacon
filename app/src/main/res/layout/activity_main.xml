@@ -33,17 +33,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.498" />
 
-    <Switch
-        android:id="@+id/fakeBeacGenerator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/map_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
@@ -62,9 +53,9 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Scan"
         android:src="@drawable/ic_baseline_bluetooth_audio_24px"
-        app:layout_constraintBottom_toTopOf="@+id/fakeBeacGenerator"
+        android:text="Scan"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView

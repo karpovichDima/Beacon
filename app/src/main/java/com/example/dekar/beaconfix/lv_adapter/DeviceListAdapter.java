@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.example.dekar.beaconfix.R;
 import com.example.dekar.beaconfix.ble_find.BluetoothLE;
@@ -27,8 +28,7 @@ public class DeviceListAdapter extends BaseAdapter {
     private String deviceName;
     private Context context;
 
-
-    public DeviceListAdapter(Context context) {
+    public DeviceListAdapter(Context context, BluetoothLE bluetoothLE) {
         super();
         this.context = context;
         devicesName = new ArrayList<>();
@@ -38,15 +38,16 @@ public class DeviceListAdapter extends BaseAdapter {
     }
 
     public void addDevice(ScanResult result) {
-
         if(result.getDevice().getName() != null) {
             if (!devicesName.contains(result.getDevice().getName())) {
                 deviceName = result.getDevice().getName();
                 mLeDevices.add(result);
                 devicesName.add(deviceName);
                 fbConnecting.connectedToFirebase(deviceName);
+                Toast.makeText(context, deviceName, Toast.LENGTH_SHORT).show();
             } else {
                 replacement(BluetoothLE.device);
+                Toast.makeText(context, deviceName, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -57,6 +58,18 @@ public class DeviceListAdapter extends BaseAdapter {
             ScanResult next = iterator.next();
             if (next.getDevice().getName().equals(result.getDevice().getName())) {
                 iterator.set(result);
+            }
+        }
+        checkDistance(result, iterator);
+    }
+
+    private void checkDistance(ScanResult result,ListIterator<ScanResult> iterator) {
+        if (result.getRssi() >= 120){
+            while (iterator.hasNext()) {
+                ScanResult next = iterator.next();
+                if (next.getDevice().getName().equals(result.getDevice().getName())) {
+                    mLeDevices.remove(iterator);
+                }
             }
         }
     }

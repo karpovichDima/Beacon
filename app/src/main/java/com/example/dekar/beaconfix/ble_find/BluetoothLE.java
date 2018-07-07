@@ -8,6 +8,7 @@ import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.example.dekar.beaconfix.MainActivity;
 import com.example.dekar.beaconfix.firebase.FBConnecting;
@@ -24,10 +25,10 @@ public class BluetoothLE {
     private BluetoothAdapter btAdapter;
     private FBConnecting fbConnecting;
     private Intent enableIntent;
-    private boolean flagFind;
     private Context context;
 
     public static ScanResult device;
+    public static boolean flagFind;
 
     public BluetoothLE(Context context) {
         this.context = context;
@@ -65,6 +66,7 @@ public class BluetoothLE {
 
     public void startScanning() {
         flagFind = true;
+        Toast.makeText(context, "Find", Toast.LENGTH_SHORT).show();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -76,8 +78,7 @@ public class BluetoothLE {
 
     public void stopScanning() {
         flagFind = false;
-        mDeviceListAdapter.clear();
-        mDeviceListAdapter.notifyDataSetChanged();
+        Toast.makeText(context, "Stop", Toast.LENGTH_SHORT).show();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -89,6 +90,4 @@ public class BluetoothLE {
     public void setmDeviceListAdapter(DeviceListAdapter deviceListAdapter){
         mDeviceListAdapter = deviceListAdapter;
     }
-
-
 }

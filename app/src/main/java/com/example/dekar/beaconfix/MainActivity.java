@@ -2,10 +2,13 @@ package com.example.dekar.beaconfix;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -27,16 +30,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BT = 1;
-
-    private TextView tvFakeBeac;
+    private FloatingActionButton startScanningButton;
     private DeviceListAdapter mDeviceListAdapter;
     private ListView listview_for_name_devices;
+    private FloatingActionButton fBMapActivity;
     private boolean findBtPressed = false;
-    private ProgressBar progressBar;
     private FBConnecting fbConnecting;
-
-    FloatingActionButton startScanningButton;
-    BluetoothLE bluetoothLE;
+    private ProgressBar progressBar;
+    private BluetoothLE bluetoothLE;
+    private Context context = this;
+    private TextView tvFakeBeac;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,42 +48,34 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         getInstanceBLE();
-        getInstanceDLA();
+        getInstanceDLA(bluetoothLE);
         bluetoothLE.setmDeviceListAdapter(mDeviceListAdapter);
         getInstanceFB(bluetoothLE);
 
         listview_for_name_devices = findViewById(R.id.listview_for_name_devices_ID);
         progressBar = findViewById(R.id.progress_bar_ID);
-        tvFakeBeac = (TextView) findViewById(R.id.tvFakeBeac);
+        tvFakeBeac = findViewById(R.id.tvFakeBeac);
         progressBar.setVisibility(View.INVISIBLE);
 
-        startScanningButton = (FloatingActionButton) findViewById(R.id.startScanButton);
-        startScanningButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // start/stop find
-                pressFind();
-            }
-        });
+        startScanningButton = findViewById(R.id.startScanButton);
+        startScanningButton.setOnClickListener((View v) -> pressFind());
+
+        fBMapActivity = findViewById(R.id.map_activity);
+        fBMapActivity.setOnClickListener((View v) -> startMapActivity());
 
         if (!(bluetoothLE.getEnableIntent() == null)) strtActvtyFrRslt();
         lctEnbld();
     }
-
-
 
     private void pressFind() {
         if (findBtPressed) {
             progressBar.setVisibility(View.INVISIBLE);
             bluetoothLE.stopScanning();
             findBtPressed = false;
-            Toast stopedToast = Toast.makeText(getApplicationContext(),"stop", Toast.LENGTH_SHORT);
-            stopedToast.show();
         } else if (!findBtPressed) {
             progressBar.setVisibility(View.VISIBLE);
             bluetoothLE.startScanning();
             findBtPressed = true;
-            Toast startedToast = Toast.makeText(getApplicationContext(),"find", Toast.LENGTH_SHORT);
-            startedToast.show();
         }
     }
 
@@ -114,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         if (bluetoothLE == null) bluetoothLE = new BluetoothLE(this);
     }
 
-    private void getInstanceDLA() {
-        if (mDeviceListAdapter == null) mDeviceListAdapter = new DeviceListAdapter(this);
+    private void getInstanceDLA(BluetoothLE bluetoothLE) {
+        if (mDeviceListAdapter == null) mDeviceListAdapter = new DeviceListAdapter(this, bluetoothLE);
     }
 
     private void getInstanceFB(BluetoothLE bluetoothLE) {
@@ -145,6 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void startMapActivity(){
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
             bluetoothLE.startScanning();
         }
     }
-
     @Override
     protected void onResume() {
         super.onResume();

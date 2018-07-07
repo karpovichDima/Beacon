@@ -23,14 +23,14 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class FBConnecting {
 
-    private Context context;
-    private BluetoothLE bluetoothLE;
     private HashMap<String, int[]> hashmapCoordinates;
     private DeviceListAdapter deviceListAdapter;
     private ArrayList<String> devicesArray;
     private ConnectivityManager manager;
     private String deviceName = " ";
+    private BluetoothLE bluetoothLE;
     private CustomView cvObject;
+    private Context context;
     private boolean is3g;
     private String output;
     private String snaps;
@@ -98,11 +98,11 @@ public class FBConnecting {
         if(!(deviceListAdapter == null)) {
             devicesArray = deviceListAdapter.getDevicesName();
             deviceName = devicesArray.get(devicesArray.size());
-        } else {deviceName = BluetoothLE.device.getDevice().getName();}
-
+        } else {
+            deviceName = BluetoothLE.device.getDevice().getName();
+        }
 
         hashmapCoordinates(deviceName, value_x_int, value_y_int);
-
         // fakeBeacCoordinator();
     }
 
