@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.example.dekar.beaconfix.R;
+import com.example.dekar.beaconfix.ble_find.BluetoothLE;
+import com.example.dekar.beaconfix.firebase.FBConnecting;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -18,16 +20,21 @@ import java.util.ListIterator;
 
 public class DeviceListAdapter extends BaseAdapter {
 
-    private LayoutInflater mInflator;
     private ArrayList<ScanResult> mLeDevices;
     private ArrayList<String> devicesName;
+    private FBConnecting fbConnecting;
+    private LayoutInflater mInflator;
     private String deviceName;
+    private Context context;
+
 
     public DeviceListAdapter(Context context) {
         super();
+        this.context = context;
         devicesName = new ArrayList<>();
         mLeDevices = new ArrayList<>();
         this.mInflator = LayoutInflater.from(context);
+        creatingFBCon();
     }
 
     public void addDevice(ScanResult result) {
@@ -37,8 +44,9 @@ public class DeviceListAdapter extends BaseAdapter {
                 deviceName = result.getDevice().getName();
                 mLeDevices.add(result);
                 devicesName.add(deviceName);
+                fbConnecting.connectedToFirebase(deviceName);
             } else {
-                replacement(result);
+                replacement(BluetoothLE.device);
             }
         }
     }
@@ -89,8 +97,16 @@ public class DeviceListAdapter extends BaseAdapter {
         mLeDevices.clear();
     }
 
-
     public ScanResult getDevice(int position) {
         return mLeDevices.get(position);
     }
+
+    public ArrayList<String> getDevicesName() {
+        return devicesName;
+    }
+
+    private void creatingFBCon(){
+        if (fbConnecting == null) fbConnecting = new FBConnecting(context);
+    }
+
 }

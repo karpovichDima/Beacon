@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dekar.beaconfix.ble_find.BluetoothLE;
+import com.example.dekar.beaconfix.firebase.FBConnecting;
 import com.example.dekar.beaconfix.lv_adapter.DeviceListAdapter;
 
 /**
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listview_for_name_devices;
     private boolean findBtPressed = false;
     private ProgressBar progressBar;
+    private FBConnecting fbConnecting;
 
     FloatingActionButton startScanningButton;
     BluetoothLE bluetoothLE;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         getInstanceBLE();
         getInstanceDLA();
         bluetoothLE.setmDeviceListAdapter(mDeviceListAdapter);
+        getInstanceFB(bluetoothLE);
 
         listview_for_name_devices = findViewById(R.id.listview_for_name_devices_ID);
         progressBar = findViewById(R.id.progress_bar_ID);
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         if (!(bluetoothLE.getEnableIntent() == null)) strtActvtyFrRslt();
         lctEnbld();
     }
+
+
 
     private void pressFind() {
         if (findBtPressed) {
@@ -111,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void getInstanceDLA() {
         if (mDeviceListAdapter == null) mDeviceListAdapter = new DeviceListAdapter(this);
+    }
+
+    private void getInstanceFB(BluetoothLE bluetoothLE) {
+        if(fbConnecting == null) fbConnecting = new FBConnecting(this, bluetoothLE, mDeviceListAdapter);
     }
 
     private void strtActvtyFrRslt() {
